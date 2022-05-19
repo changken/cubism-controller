@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
 
-	<link rel="stylesheet" href="dist/theme/sky.css" id="theme">
+	<link rel="stylesheet" href="dist/theme/beige.css" id="theme">
 
 	<!-- Theme used for syntax highlighted code -->
 	<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
@@ -40,6 +40,14 @@
 			transition-duration: 0.3s;
 			opacity: 0;
 		}
+
+		#app{
+			font-size: 22px;
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			padding: 10px;
+		}
 	</style>
 
 
@@ -52,20 +60,31 @@
 	<script src="./anime/custom.js"></script>
 </head>
 
-<body onkeydown="toggleAvatar(event)">
+<body onkeydown="toggleAvatar(event)" style="background-color: #255359 !important;">
 
 
 	<div class="reveal">
 		<div class="slides">
-			<section>
-				<h1>Controller</h1>
+			<section data-auto-animate data-background-color="#255359">
+				<h1>Comment allez-vous?</h1>
 			</section>
-			<section>
-				<h1>Controller2</h1>
+			<section data-auto-animate data-background-color="#255359">
+				<h1>Comment allez-vous?</h1>
+				<h1>張: Très bien, et toi?</h1>
 			</section>
-			<section>
-				<h1>Controller3</h1>
+			<!-- 
+			<section data-auto-animate>
+				<h1>C'est</h1>
 			</section>
+			<section data-auto-animate>
+				<h1>C'est</h1>
+				<h1>la</h1>
+			</section>
+			<section data-auto-animate>
+				<h1>C'est</h1>
+				<h1>la</h1>
+				<h1>vie</h1>
+			</section> -->
 		</div>
 	</div>
 	<script src="dist/reveal.js"></script>
@@ -133,7 +152,11 @@
 	</script>
 
 	<div style="display: none;" id="audio"></div>
+	<div id="app"></div>
 </body>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script type="module">
 	// Import the functions you need from the SDKs you need
 	import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
@@ -145,14 +168,15 @@
 	// Your web app's Firebase configuration
 	// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 	const firebaseConfig = {
-		apiKey: "AIzaSyC0U2rvoObRWZ2bh1Gv2B2koWfknjoCnZA",
-		authDomain: "online-reveal.firebaseapp.com",
-		projectId: "online-reveal",
-		storageBucket: "online-reveal.appspot.com",
-		messagingSenderId: "744052638995",
-		appId: "1:744052638995:web:514096f511290fedd806e6",
-		measurementId: "G-9H9TCS8E1T"
+		apiKey: "AIzaSyBPuCHLBYNPwKewtXFwyGENY9t8I6AEjhI",
+		authDomain: "moe-new-project.firebaseapp.com",
+		projectId: "moe-new-project",
+		storageBucket: "moe-new-project.appspot.com",
+		messagingSenderId: "810076068524",
+		appId: "1:810076068524:web:60eb94eea03ef128199d09",
+		measurementId: "G-NDTNK4M0QD"
 	};
+
 
 	// Initialize Firebase
 	const app = initializeApp(firebaseConfig);
@@ -164,7 +188,7 @@
 		let updates = {}
 
 		let currentIndice = Reveal.getIndices();
-		currentIndice.f =  currentIndice.f || -99;
+		currentIndice.f =  currentIndice.f || -99;//沒有fragment會變null firebase會報錯
 
 		updates[`mx`] = Math.round(mouseX * 100) / 100;
 		updates[`my`] = Math.round(mouseY * 100) / 100;
@@ -221,6 +245,18 @@
 		mouseX = ev.clientX / window.innerWidth;
 		mouseY = ev.clientY / window.innerHeight;
 	})
+</script>
+<script type="text/babel">
+	const {useState, useEffect} = React;
+	const {createRoot} = ReactDOM;
+
+	const App = () =>{
+		return <h1>sss</h1>;
+	};
+
+	const root = createRoot(document.querySelector("#app"));
+
+	root.render(<App/>);
 </script>
 
 </html>

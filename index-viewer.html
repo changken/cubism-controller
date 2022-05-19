@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
 
-	<link rel="stylesheet" href="dist/theme/sky.css" id="theme">
+	<link rel="stylesheet" href="dist/theme/beige.css" id="theme">
 
 	<!-- Theme used for syntax highlighted code -->
 	<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
@@ -52,20 +52,30 @@
 	<script src="./anime/custom.js"></script>
 </head>
 
-<body onkeydown="toggleAvatar(event)">
+<body onkeydown="toggleAvatar(event)"  style="background-color: #255359 !important;">
 
 
 	<div class="reveal">
 		<div class="slides">
-			<section>
-				<h1>Viewer</h1>
+			<section data-auto-animate data-background-color="#255359">
+				<h1>Comment allez-vous?</h1>
 			</section>
-			<section>
-				<h1>Viewer2</h1>
+			<section data-auto-animate data-background-color="#255359">
+				<h1>Comment allez-vous?</h1>
+				<h1>張: Très bien, et toi?</h1>
 			</section>
-			<section>
-				<h1>Viewer3</h1>
+			<!-- <section data-auto-animate>
+				<h1>C'est</h1>
 			</section>
+			<section data-auto-animate>
+				<h1>C'est</h1>
+				<h1>la</h1>
+			</section>
+			<section data-auto-animate>
+				<h1>C'est</h1>
+				<h1>la</h1>
+				<h1>vie</h1>
+			</section> -->
 		</div>
 	</div>
 	<script src="dist/reveal.js"></script>
@@ -130,6 +140,9 @@
 
 	<div style="display: none;" id="audio"></div>
 </body>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script type="module">
 	// Import the functions you need from the SDKs you need
 	import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
@@ -141,13 +154,13 @@
 	// Your web app's Firebase configuration
 	// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 	const firebaseConfig = {
-		apiKey: "AIzaSyC0U2rvoObRWZ2bh1Gv2B2koWfknjoCnZA",
-		authDomain: "online-reveal.firebaseapp.com",
-		projectId: "online-reveal",
-		storageBucket: "online-reveal.appspot.com",
-		messagingSenderId: "744052638995",
-		appId: "1:744052638995:web:514096f511290fedd806e6",
-		measurementId: "G-9H9TCS8E1T"
+		apiKey: "AIzaSyBPuCHLBYNPwKewtXFwyGENY9t8I6AEjhI",
+		authDomain: "moe-new-project.firebaseapp.com",
+		projectId: "moe-new-project",
+		storageBucket: "moe-new-project.appspot.com",
+		messagingSenderId: "810076068524",
+		appId: "1:810076068524:web:60eb94eea03ef128199d09",
+		measurementId: "G-NDTNK4M0QD"
 	};
 
 	// Initialize Firebase
@@ -156,6 +169,7 @@
 
 	const db = getDatabase(app);
 
+	//snapshot來監聽mx資料
 	onValue(ref(db, 'mx'), (snap)=>{
 		mx = snap.val();
 		window.updateMouseData()
