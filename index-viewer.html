@@ -40,6 +40,15 @@
 			transition-duration: 0.3s;
 			opacity: 0;
 		}
+		#app{
+			font-size: 22px;
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			padding: 10px;
+			background: #8E354A;
+			color:#fff;
+		}
 	</style>
 
 
@@ -139,6 +148,7 @@
 	</script>
 
 	<div style="display: none;" id="audio"></div>
+	<div id="app"></div>
 </body>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -169,23 +179,28 @@
 
 	const db = getDatabase(app);
 
-	//snapshot來監聽mx資料
-	onValue(ref(db, 'mx'), (snap)=>{
-		mx = snap.val();
-		window.updateMouseData()
-	})
-	onValue(ref(db, 'my'), (snap)=>{
-		my = snap.val();
-		window.updateMouseData()
-	})
-	onValue(ref(db, 'mouth'), (snap)=>{
-		mouth = snap.val();
-		audioElem.innerHTML = mouth;
-	})
-	onValue(ref(db, 'sx'), (snap)=>{
-		sx = snap.val();
-		Reveal.slide(sx.h, sx.v, sx.f)
-	})
+	let urlParams = new URLSearchParams(window.location.search);
+
+	if(urlParams.has("userId")){
+		let userId = urlParams.get("userId");
+		//snapshot來監聽mx資料
+		onValue(ref(db, `userId/${userId}/mx`), (snap)=>{
+			mx = snap.val();
+			window.updateMouseData()
+		})
+		onValue(ref(db, `userId/${userId}/my`), (snap)=>{
+			my = snap.val();
+			window.updateMouseData()
+		})
+		onValue(ref(db, `userId/${userId}/mouth`), (snap)=>{
+			mouth = snap.val();
+			audioElem.innerHTML = mouth;
+		})
+		onValue(ref(db, `userId/${userId}/sx`), (snap)=>{
+			sx = snap.val();
+			Reveal.slide(sx.h, sx.v, sx.f)
+		})
+	}
 
 
 </script>
@@ -234,6 +249,19 @@
 		}
 	}, 10);
 	
+</script>
+<script type="text/babel">
+	const {useState, useEffect} = React;
+	const {createRoot} = ReactDOM;
+
+	const App = () =>{
+		let urlParams = new URLSearchParams(window.location.search);
+		return urlParams.has("userId") ? <h1>客戶端userId: {urlParams.get("userId")}</h1> : '沒有userId';
+	};
+
+	const root = createRoot(document.querySelector("#app"));
+
+	root.render(<App/>);
 </script>
 
 </html>

@@ -47,6 +47,8 @@
 			bottom: 0;
 			left: 0;
 			padding: 10px;
+			background: #8E354A;
+			color:#fff;
 		}
 	</style>
 
@@ -184,6 +186,8 @@
 
 	const database = getDatabase(app);
 
+	let urlParams = new URLSearchParams(window.location.search);
+
 	const updateData = () => {
 		let updates = {}
 
@@ -194,16 +198,17 @@
 		updates[`my`] = Math.round(mouseY * 100) / 100;
 		updates[`mouth`] = Math.round(lastVolume * 100) / 100;
 		updates[`sx`] = currentIndice;
-		update(ref(database), updates);
+		update(ref(database, `userId/${urlParams.get("userId")}`), updates);
 
 		// requestAnimationFrame(updateData)
 	}
 
-	setInterval(() => {
+	if(urlParams.has("userId")){
+		setInterval(() => {
+			updateData();
+		}, 100)
 		updateData();
-	}, 100)
-	updateData();
-
+	}
 </script>
 <script>
 	// LIPSYNC
@@ -251,7 +256,8 @@
 	const {createRoot} = ReactDOM;
 
 	const App = () =>{
-		return <h1>sss</h1>;
+		let urlParams = new URLSearchParams(window.location.search);
+		return urlParams.has("userId") ? <h1>控制端userId: {urlParams.get("userId")}</h1> : '沒有userId';
 	};
 
 	const root = createRoot(document.querySelector("#app"));
