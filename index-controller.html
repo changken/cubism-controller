@@ -68,13 +68,16 @@
 	<div class="reveal">
 		<div class="slides">
 			<section data-auto-animate data-background-color="#255359">
+				<h2>Controller</h2>
+			</section>
+			<!-- 
+			<section data-auto-animate data-background-color="#255359">
 				<h1>Comment allez-vous?</h1>
 			</section>
 			<section data-auto-animate data-background-color="#255359">
 				<h1>Comment allez-vous?</h1>
 				<h1>張: Très bien, et toi?</h1>
 			</section>
-			<!-- 
 			<section data-auto-animate>
 				<h1>C'est</h1>
 			</section>
@@ -198,17 +201,20 @@
 		updates[`my`] = Math.round(mouseY * 100) / 100;
 		updates[`mouth`] = Math.round(lastVolume * 100) / 100;
 		updates[`sx`] = currentIndice;
-		update(ref(database, `userId/${urlParams.get("userId")}`), updates);
+		if(urlParams.has("userId")){
+			update(ref(database, `userId/${urlParams.get("userId")}`), updates);
+		}else{
+			console.log('public channel');
+			update(ref(database), updates);
+		}
 
 		// requestAnimationFrame(updateData)
 	}
 
-	if(urlParams.has("userId")){
-		setInterval(() => {
-			updateData();
-		}, 100)
+	setInterval(() => {
 		updateData();
-	}
+	}, 100)
+	updateData();
 </script>
 <script>
 	// LIPSYNC
@@ -251,13 +257,42 @@
 		mouseY = ev.clientY / window.innerHeight;
 	})
 </script>
+<script src="utils.js"></script>
 <script type="text/babel">
 	const {useState, useEffect} = React;
 	const {createRoot} = ReactDOM;
 
 	const App = () =>{
 		let urlParams = new URLSearchParams(window.location.search);
-		return urlParams.has("userId") ? <h1>控制端userId: {urlParams.get("userId")}</h1> : '沒有userId';
+		
+		const [userId, setUserId] = useState('');
+
+		const onChangeUserId = event => {
+			setUserId(event.target.value);
+		}
+
+		const onKeyupUserId = event => {
+			if (event.key === 'Enter' || event.keyCode === 13) {
+				setUserId(event.target.value);
+				location.href=`index-controller.html?userId=${event.target.value}`;
+       		}
+		}
+
+		const onClickPublicChannel = () =>{
+			setUserId('');
+			location.href=`index-controller.html`;
+		}
+		
+		return <>
+			<IfComponent statement={urlParams.has("userId")}>
+				<h1>控制端userId: {urlParams.get("userId")}</h1>
+				<button onClick={onClickPublicChannel}>回到公有頻道</button>
+			</IfComponent>
+			<ElseComponent statement={urlParams.has("userId")}>
+				<h1>沒有userId: 公用頻道</h1>
+				UserId: <input type="text" value={userId} onChange={onChangeUserId} onKeyUp={onKeyupUserId}/>
+			</ElseComponent>
+		</>;
 	};
 
 	const root = createRoot(document.querySelector("#app"));
