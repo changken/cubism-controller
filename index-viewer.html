@@ -314,7 +314,12 @@
 
     let urlParams = new URLSearchParams(window.location.search);
 
-    const msgRef = ref(db, 'messages');
+    const msgRef = ref(
+      db,
+      urlParams.has('userId')
+        ? `userId/${urlParams.get('userId')}/messages`
+        : 'messages'
+    );
 
     if (urlParams.has('userId')) {
       let userId = urlParams.get('userId');
@@ -358,11 +363,19 @@
 
     const editable = document.getElementById('editable');
 
-    onValue(ref(db, 'rtmsg'), snap => {
-      let msg = snap.val();
-      editable.innerHTML = msg;
-      window.dispatchEvent(new Event('resize'));
-    });
+    onValue(
+      ref(
+        db,
+        urlParams.has('userId')
+          ? `userId/${urlParams.get('userId')}/rtmsg`
+          : 'rtmsg'
+      ),
+      snap => {
+        let msg = snap.val();
+        editable.innerHTML = msg;
+        window.dispatchEvent(new Event('resize'));
+      }
+    );
 
     const bubbleContainer = document.getElementById('bubble');
     let bubbleTimer = null;

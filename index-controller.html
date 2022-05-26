@@ -258,18 +258,38 @@
     };
 
     async function init() {
-      const msgRef = ref(database, 'messages');
+      const msgRef = ref(
+        database,
+        urlParams.has('userId')
+          ? `userId/${urlParams.get('userId')}/messages`
+          : 'messages'
+      );
       await set(msgRef, null);
     }
 
     init();
 
     async function pushNewMessage(msg) {
-      const newMsgRef = push(ref(database, 'messages'));
+      const newMsgRef = push(
+        ref(
+          database,
+          urlParams.has('userId')
+            ? `userId/${urlParams.get('userId')}/messages`
+            : 'messages'
+        )
+      );
       await set(newMsgRef, msg);
     }
     async function setEditable(msg) {
-      await set(ref(database, 'rtmsg'), msg);
+      await set(
+        ref(
+          database,
+          urlParams.has('userId')
+            ? `userId/${urlParams.get('userId')}/rtmsg`
+            : 'rtmsg'
+        ),
+        msg
+      );
     }
 
     const chatInput = document.getElementById('chat-input');
