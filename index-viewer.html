@@ -1,75 +1,177 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
 
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
-		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <title>Viewer</title>
 
-	<title>Viewer</title>
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
 
+    <link rel="stylesheet" href="dist/theme/beige.css" id="theme" />
 
-	<link rel="stylesheet" href="dist/reset.css">
-	<link rel="stylesheet" href="dist/reveal.css">
+    <!-- Theme used for syntax highlighted code -->
+    <link
+      rel="stylesheet"
+      href="plugin/highlight/monokai.css"
+      id="highlight-theme"
+    />
+    <link rel="stylesheet" href="custom.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;900&family=Noto+Sans+TC:wght@400;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      canvas#live2D {
+        transition-property: opacity;
+        transition-duration: 0.3s;
+        pointer-events: none;
+        position: fixed !important;
+        bottom: 0;
+        right: -20px;
+        z-index: 999999;
+        opacity: 1;
+        height: 100%;
+      }
 
-	<link rel="stylesheet" href="dist/theme/beige.css" id="theme">
+      canvas#live2D:hover {
+        transition-delay: 0.5s;
+      }
 
-	<!-- Theme used for syntax highlighted code -->
-	<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
-	<link rel="stylesheet" href="custom.css">
-	<style>
-		canvas#live2D {
-			transition-property: opacity;
-			transition-duration: 0.3s;
-			pointer-events: none;
-			position: fixed !important;
-			bottom: 0;
-			right: -20px;
-			z-index: 999999;
-			opacity: 1;
-		}
+      canvas#live2D.hidden,
+      canvas#live2D:hover {
+        transition-property: opacity;
+        transition-duration: 0.3s;
+        opacity: 0;
+      }
+      #app {
+        font-size: 22px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        padding: 10px;
+        background: #8e354a;
+        color: #fff;
+        z-index: 9999999;
+      }
+    </style>
+    <style>
+      #bullets {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999999;
+      }
 
-		canvas#live2D:hover {
-			transition-delay: 0.5s;
-		}
+      @keyframes flyover {
+        from {
+          left: -20%;
+          transform: translateX(-100%);
+        }
 
-		canvas#live2D.hidden,
-		canvas#live2D:hover {
-			transition-property: opacity;
-			transition-duration: 0.3s;
-			opacity: 0;
-		}
-		#app{
-			font-size: 22px;
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			padding: 10px;
-			background: #8E354A;
-			color:#fff;
-		}
-	</style>
+        to {
+          left: 150%;
+          transform: translateX(100%);
+        }
+      }
 
+      #bullets > * {
+        display: block;
+        width: fit-content;
+        position: absolute;
+        animation: flyover 60s normal forwards;
+        font-size: 6rem;
+        color: white;
+        text-shadow: 8px 8px #000000;
+        text-overflow: clip;
+        font-family: 'Noto Sans JP', 'Noto Sans TC', sans-serif;
+        font-weight: 900;
+        opacity: 0.7;
+      }
 
-	<!-- Pollyfill script -->
-	<script src="./anime/dist/core-minified.js"></script>
-	<!-- Live2DCubismCore script -->
-	<script src="./anime/core/live2dcubismcore.js"></script>
-	<!-- Build script -->
-	<script src="./anime/dist/bundle.js"></script>
-	<script src="./anime/custom.js"></script>
-</head>
+      .bubble.hidden {
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
 
-<body onkeydown="toggleAvatar(event)"  style="background-color: #255359 !important;">
+      .bubble {
+        transition: opacity 0.3s;
+        opacity: 1;
+        display: inline-block;
+        position: absolute;
+        background: #ffffff;
+        color: #000000;
+        font-family: 'Noto Sans JP', 'Noto Sans TC', sans-serif;
+        font-size: 3em;
+        /* font-size: 20px; */
+        /* line-height: 86px; */
+        filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.41));
+        text-align: center;
+        /* width: 239px;
+			height: 86px; */
+        border-radius: 10px;
+        padding: 10px;
+        max-width: 20em;
+        transform: translateY(-90px) !important;
+        font-weight: 400;
+        z-index: 99999999999;
+      }
 
+      h1 {
+        font-family: 'Noto Sans JP', 'Noto Sans TC', sans-serif;
+        font-weight: 900;
+      }
 
-	<div class="reveal">
-		<div class="slides">
+      .bubble:after {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 0;
+        z-index: 1;
+        border-style: solid;
+        border-color: #ffffff transparent;
+        border-width: 20px 14px 0;
+        bottom: -20px;
+        left: 50%;
+        margin-left: -14px;
+      }
+    </style>
+
+    <!-- Pollyfill script -->
+    <script src="./anime/dist/core-minified.js"></script>
+    <!-- Live2DCubismCore script -->
+    <script src="./anime/core/live2dcubismcore.js"></script>
+    <!-- Build script -->
+    <script src="./anime/dist/bundle.js"></script>
+    <script src="./anime/custom.js"></script>
+  </head>
+
+  <body
+    onkeydown="toggleAvatar(event)"
+    style="background-color: rgb(36, 147, 110)"
+  >
+    <div class="bubble hidden" id="bubble">
+      <span> asdfadsad dawd awd wa dwad awd awdwadadwad </span>
+    </div>
+    <div id="bullets"></div>
+
+    <div class="reveal">
+      <div class="slides">
+        <!-- 
 			<section data-auto-animate data-background-color="#255359">
 				<h2>Viewer</h2>
 			</section>
-			<!-- 
 			<section data-auto-animate data-background-color="#255359">
 				<h1>Comment allez-vous?</h1>
 			</section>
@@ -89,231 +191,332 @@
 				<h1>la</h1>
 				<h1>vie</h1>
 			</section> -->
-		</div>
-	</div>
-	<script src="dist/reveal.js"></script>
-	<script src="plugin/notes/notes.js"></script>
-	<script src="plugin/markdown/markdown.js"></script>
-	<script src="plugin/highlight/highlight.js"></script>
-	<script src="plugin/math/math.js"></script>
-	<script>
-		function getPath() {
-			var path = "";
-			nodes = window.location.pathname.split('/');
-			for (var index = 0; index < nodes.length - 3; index++) {
-				path += "../";
-			}
-			return path;
-		}
+        <section>
+          <h1>綠青</h1>
+        </section>
+        <section>
+          <h1>彭敘豪</h1>
+        </section>
+        <section>
+          <h1 id="editable"></h1>
+        </section>
+      </div>
+    </div>
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+      function getPath() {
+        var path = '';
+        nodes = window.location.pathname.split('/');
+        for (var index = 0; index < nodes.length - 3; index++) {
+          path += '../';
+        }
+        return path;
+      }
 
-		// More info about initialization & config:
-		// - https://revealjs.com/initialization/
-		// - https://revealjs.com/config/
-		Reveal.initialize({
-			hash: true,
-			math: {
-				mathjax: 'https://cdn.jsdelivr.net/gh/mathjax/mathjax@2.7.8/MathJax.js',
-				config: 'TeX-AMS_HTML-full',
-				// pass other options into `MathJax.Hub.Config()`
-				TeX: {
-					Macros: {
-						RR: "{\\bf R}"
-					}
-				}
-			},
-			// Learn about plugins: https://revealjs.com/plugins/
-			plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath],
-			dependencies: [{
-				src: 'plugin/math/math.js',
-				async: true
-			}]
-		});
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+        math: {
+          mathjax:
+            'https://cdn.jsdelivr.net/gh/mathjax/mathjax@2.7.8/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          // pass other options into `MathJax.Hub.Config()`
+          TeX: {
+            Macros: {
+              RR: '{\\bf R}',
+            },
+          },
+        },
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath],
+        dependencies: [
+          {
+            src: 'plugin/math/math.js',
+            async: true,
+          },
+        ],
+      });
 
-		Reveal.on('autoanimate', event => {
-			setTimeout(function () {
-				removeAllAutoAnimates(event.toSlide)
-			}, Reveal.getConfig().autoAnimateDuration * 1000);
+      Reveal.on('autoanimate', event => {
+        setTimeout(function () {
+          removeAllAutoAnimates(event.toSlide);
+        }, Reveal.getConfig().autoAnimateDuration * 1000);
+      });
 
-		});
+      function removeAllAutoAnimates(element) {
+        try {
+          element.removeAttribute('data-auto-animate-target');
+          element.childNodes.forEach(element => {
+            removeAllAutoAnimates(element);
+          });
+        } catch {}
+      }
+    </script>
 
+    <div style="display: none" id="audio"></div>
+    <div id="app"></div>
+  </body>
+  <script
+    crossorigin
+    src="https://unpkg.com/react@18/umd/react.development.js"
+  ></script>
+  <script
+    crossorigin
+    src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+  ></script>
+  <script
+    crossorigin
+    src="https://unpkg.com/@babel/standalone/babel.min.js"
+  ></script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js';
+    import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-analytics.js';
+    import {
+      getDatabase,
+      ref,
+      set,
+      push,
+      onValue,
+      onChildAdded,
+      update,
+      remove,
+      limitToLast,
+      orderByKey,
+      query,
+    } from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js';
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
 
-		function removeAllAutoAnimates(element) {
-			try {
-				element.removeAttribute("data-auto-animate-target");
-				element.childNodes.forEach(element => {
-					removeAllAutoAnimates(element);
-				});
-			} catch {
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: 'AIzaSyBPuCHLBYNPwKewtXFwyGENY9t8I6AEjhI',
+      authDomain: 'moe-new-project.firebaseapp.com',
+      projectId: 'moe-new-project',
+      storageBucket: 'moe-new-project.appspot.com',
+      messagingSenderId: '810076068524',
+      appId: '1:810076068524:web:60eb94eea03ef128199d09',
+      measurementId: 'G-NDTNK4M0QD',
+    };
 
-			}
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
 
+    const db = getDatabase(app);
 
-		}
-	</script>
+    let urlParams = new URLSearchParams(window.location.search);
 
-	<div style="display: none;" id="audio"></div>
-	<div id="app"></div>
-</body>
-<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script type="module">
-	// Import the functions you need from the SDKs you need
-	import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
-	import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-analytics.js";
-	import { getDatabase, ref, set, push, onValue, onChildAdded, update, remove } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
-	// TODO: Add SDKs for Firebase products that you want to use
-	// https://firebase.google.com/docs/web/setup#available-libraries
+    const msgRef = ref(db, 'messages');
 
-	// Your web app's Firebase configuration
-	// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-	const firebaseConfig = {
-		apiKey: "AIzaSyBPuCHLBYNPwKewtXFwyGENY9t8I6AEjhI",
-		authDomain: "moe-new-project.firebaseapp.com",
-		projectId: "moe-new-project",
-		storageBucket: "moe-new-project.appspot.com",
-		messagingSenderId: "810076068524",
-		appId: "1:810076068524:web:60eb94eea03ef128199d09",
-		measurementId: "G-NDTNK4M0QD"
-	};
+    if (urlParams.has('userId')) {
+      let userId = urlParams.get('userId');
+      //snapshot來監聽mx資料
+      onValue(ref(db, `userId/${userId}/mx`), snap => {
+        mx = snap.val();
+        window.updateMouseData();
+      });
+      onValue(ref(db, `userId/${userId}/my`), snap => {
+        my = snap.val();
+        window.updateMouseData();
+      });
+      onValue(ref(db, `userId/${userId}/mouth`), snap => {
+        mouth = snap.val();
+        audioElem.innerHTML = mouth;
+      });
+      onValue(ref(db, `userId/${userId}/sx`), snap => {
+        sx = snap.val();
+        Reveal.slide(sx.h, sx.v, sx.f);
+      });
+    } else {
+      console.log('public channel');
+      //snapshot來監聽mx資料
+      onValue(ref(db, 'mx'), snap => {
+        mx = snap.val();
+        window.updateMouseData();
+      });
+      onValue(ref(db, 'my'), snap => {
+        my = snap.val();
+        window.updateMouseData();
+      });
+      onValue(ref(db, 'mouth'), snap => {
+        mouth = snap.val();
+        audioElem.innerHTML = mouth;
+      });
+      onValue(ref(db, 'sx'), snap => {
+        sx = snap.val();
+        Reveal.slide(sx.h, sx.v, sx.f);
+      });
+    }
 
-	// Initialize Firebase
-	const app = initializeApp(firebaseConfig);
-	const analytics = getAnalytics(app);
+    const editable = document.getElementById('editable');
 
-	const db = getDatabase(app);
+    onValue(ref(db, 'rtmsg'), snap => {
+      let msg = snap.val();
+      editable.innerHTML = msg;
+      window.dispatchEvent(new Event('resize'));
+    });
 
-	let urlParams = new URLSearchParams(window.location.search);
+    const bubbleContainer = document.getElementById('bubble');
+    let bubbleTimer = null;
+    try {
+    } catch (err) {
+      console.error(err);
+    }
 
-	if(urlParams.has("userId")){
-		let userId = urlParams.get("userId");
-		//snapshot來監聽mx資料
-		onValue(ref(db, `userId/${userId}/mx`), (snap)=>{
-			mx = snap.val();
-			window.updateMouseData()
-		})
-		onValue(ref(db, `userId/${userId}/my`), (snap)=>{
-			my = snap.val();
-			window.updateMouseData()
-		})
-		onValue(ref(db, `userId/${userId}/mouth`), (snap)=>{
-			mouth = snap.val();
-			audioElem.innerHTML = mouth;
-		})
-		onValue(ref(db, `userId/${userId}/sx`), (snap)=>{
-			sx = snap.val();
-			Reveal.slide(sx.h, sx.v, sx.f)
-		})
-	}else{
-		console.log('public channel');
-		//snapshot來監聽mx資料
-		onValue(ref(db, 'mx'), (snap)=>{
-			mx = snap.val();
-			window.updateMouseData()
-		})
-		onValue(ref(db, 'my'), (snap)=>{
-			my = snap.val();
-			window.updateMouseData()
-		})
-		onValue(ref(db, 'mouth'), (snap)=>{
-			mouth = snap.val();
-			audioElem.innerHTML = mouth;
-		})
-		onValue(ref(db, 'sx'), (snap)=>{
-			sx = snap.val();
-			Reveal.slide(sx.h, sx.v, sx.f)
-		})
-	}
+    onValue(query(msgRef, limitToLast(1)), snap => {
+      let msg = Object.values(snap.val())[0];
+      clearTimeout(bubbleTimer);
+      bubbleContainer.innerHTML = msg;
+      bubbleContainer.classList.toggle('hidden', false);
+      bubbleTimer = setTimeout(() => {
+        bubbleContainer.classList.toggle('hidden', true);
+      }, 5000);
+      setTimeout(() => {
+        const node = document.createElement('span');
+        const textnode = document.createTextNode(msg);
+        node.appendChild(textnode);
+        node.style.left = -150 - Math.random() * 50 + 'px';
+        node.style.top = window.innerHeight * 0.8 * Math.random() + 'px';
+        // node.style.cssText = `top: ${window.clientY * Math.random()}px;`
+        bulletContainer.appendChild(node);
+      }, Math.random() * 10);
+    });
 
+    const bulletContainer = document.getElementById('bullets');
+    // onChildAdded(msgRef, snap => {
+    // 	let msg = snap.val();
 
-</script>
-<script>
-	// LIPSYNC
-	var audioElem = document.getElementById("audio");
-	var modifier = 150;
-	var lastVolume = 0;
-	var mx = 0, my = 0, mouth = 0, sx = 0;
-	// setInterval(() => {
-	// 	var volume = getMicorphoneVolume() / 150;
-	// 	var lowThreshold = 0.3;
-	// 	var modifiedVolume = 0;
-	// 	if (volume > lowThreshold) {
-	// 		modifiedVolume = (volume * 0.7 + lastVolume * 0.3);
-	// 	} else {
-	// 		modifiedVolume = lastVolume / 2;
-	// 	}
-	// 	audioElem.innerHTML = modifiedVolume;
-	// 	lastVolume = modifiedVolume;
+    // })
+  </script>
+  <script>
+    // LIPSYNC
+    var audioElem = document.getElementById('audio');
+    var modifier = 150;
+    var lastVolume = 0;
+    var mx = 0,
+      my = 0,
+      mouth = 0,
+      sx = 0;
+    // setInterval(() => {
+    // 	var volume = getMicorphoneVolume() / 150;
+    // 	var lowThreshold = 0.3;
+    // 	var modifiedVolume = 0;
+    // 	if (volume > lowThreshold) {
+    // 		modifiedVolume = (volume * 0.7 + lastVolume * 0.3);
+    // 	} else {
+    // 		modifiedVolume = lastVolume / 2;
+    // 	}
+    // 	audioElem.innerHTML = modifiedVolume;
+    // 	lastVolume = modifiedVolume;
 
-	// }, 10);
+    // }, 10);
 
-	//toggle avatar visibility
-	function toggleAvatar(e) {
-		if (e.keyCode != 192) {
-			return;
-		};
-		var avatar = $("canvas#live2D");
-		if (avatar.hasClass("hidden")) {
-			avatar.removeClass("hidden");
-		} else {
-			avatar.addClass("hidden");
-		}
-	}
-	let oldmm = null;
+    //toggle avatar visibility
+    function toggleAvatar(e) {
+      if (e.keyCode != 192) {
+        return;
+      }
+      var avatar = $('canvas#live2D');
+      if (avatar.hasClass('hidden')) {
+        avatar.removeClass('hidden');
+      } else {
+        avatar.addClass('hidden');
+      }
+    }
+    let oldmm = null;
 
-	const checkmm = setInterval(()=>{
-		if(window.onmousemove){
-			oldmm = window.onmousemove;
-			window.updateMouseData = () => {
-				let fakeMouse = {clientX:mx * window.innerWidth, clientY:my * window.innerHeight}
-				oldmm(fakeMouse);
-			}
-			window.clearInterval(checkmm);
-		}
-	}, 10);
-	
-</script>
-<script src="utils.js"></script>
-<script type="text/babel">
-	const {useState, useEffect} = React;
-	const {createRoot} = ReactDOM;
+    const checkmm = setInterval(() => {
+      if (window.onmousemove) {
+        oldmm = window.onmousemove;
+        window.updateMouseData = () => {
+          let fakeMouse = {
+            clientX: mx * window.innerWidth,
+            clientY: my * window.innerHeight,
+          };
+          oldmm(fakeMouse);
+        };
+        window.clearInterval(checkmm);
+      }
+    }, 10);
+  </script>
+  <script src="utils.js"></script>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { createRoot } = ReactDOM;
 
-	const App = () =>{
-		let urlParams = new URLSearchParams(window.location.search);
-		
-		const [userId, setUserId] = useState('');
+    const App = () => {
+      let urlParams = new URLSearchParams(window.location.search);
 
-		const onChangeUserId = event => {
-			setUserId(event.target.value);
-		}
+      const [userId, setUserId] = useState('');
 
-		const onKeyupUserId = event => {
-			if (event.key === 'Enter' || event.keyCode === 13) {
-				setUserId(event.target.value);
-				location.href=`index-viewer.html?userId=${event.target.value}`;
-       		}
-		}
+      const onChangeUserId = event => {
+        setUserId(event.target.value);
+      };
 
-		const onClickPublicChannel = () =>{
-			setUserId('');
-			location.href=`index-viewer.html`;
-		}
-		
-		return <>
-			<IfComponent statement={urlParams.has("userId")}>
-				<h1>控制端userId: {urlParams.get("userId")}</h1>
-				<button onClick={onClickPublicChannel}>回到公有頻道</button>
-			</IfComponent>
-			<ElseComponent statement={urlParams.has("userId")}>
-				<h1>沒有userId: 公用頻道</h1>
-				UserId: <input type="text" value={userId} onChange={onChangeUserId} onKeyUp={onKeyupUserId}/>
-			</ElseComponent>
-		</>;
-	};
+      const onKeyupUserId = event => {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          setUserId(event.target.value);
+          location.href = `index-viewer.html?userId=${event.target.value}`;
+        }
+      };
 
-	const root = createRoot(document.querySelector("#app"));
+      const onClickPublicChannel = () => {
+        setUserId('');
+        location.href = `index-viewer.html`;
+      };
 
-	root.render(<App/>);
-</script>
+      return (
+        <>
+          <IfComponent statement={urlParams.has('userId')}>
+            <h1>控制端userId: {urlParams.get('userId')}</h1>
+            <button onClick={onClickPublicChannel}>回到公有頻道</button>
+          </IfComponent>
+          <ElseComponent statement={urlParams.has('userId')}>
+            <h1>沒有userId: 公用頻道</h1>
+            UserId:{' '}
+            <input
+              type="text"
+              value={userId}
+              onChange={onChangeUserId}
+              onKeyUp={onKeyupUserId}
+            />
+          </ElseComponent>
+        </>
+      );
+    };
 
+    const root = createRoot(document.querySelector('#app'));
+
+    root.render(<App />);
+
+    //howlemon senpai
+
+    const bubble = document.getElementById('bubble');
+    let canvas = null;
+    let stupidFind = setInterval(() => {
+      if (document.getElementById('live2D')) {
+        clearInterval(stupidFind);
+        canvas = document.getElementById('live2D');
+        onmousemove = null;
+        window.onresize();
+      }
+    }, 100);
+
+    window.onresize = () => {
+      if (!canvas) return;
+      const size = canvas.getBoundingClientRect();
+      bubble.style.cssText = `
+    			top:${size.y + 150}px;
+    			left:${size.x + 20}px;
+    		`;
+    };
+  </script>
 </html>
