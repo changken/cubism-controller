@@ -57,6 +57,7 @@
         padding: 10px;
         background: #8e354a;
         color: #fff;
+        z-index: 9999999;
       }
 
       .chat {
@@ -67,6 +68,15 @@
         outline: none;
         max-height: 80vh;
         overflow: hidden;
+      }
+
+      .reveal .slides{
+        position: absolute;
+        z-index: 9999999;
+        top:30% !important;
+        left: 30% !important;
+        /* writing-mode: vertical-lr; */
+
       }
     </style>
 
@@ -114,15 +124,15 @@
 				<h1>la</h1>
 				<h1>vie</h1>
 			</section> -->
-        <section>
-          <h1>綠青</h1>
-        </section>
-        <section>
-          <h1>彭敘豪</h1>
-        </section>
-        <section>
-          <h1 id="editable" contenteditable="true"></h1>
-        </section>
+      <section>
+        <h1>有<br>聽<br>懂</h1>
+      </section>
+      <section>
+        <h1 id="editable"></h1>
+      </section>
+      <section>
+        <h1>聽<br>不<br>懂</h1>
+      </section>
       </div>
     </div>
     <script src="dist/reveal.js"></script>
@@ -388,12 +398,12 @@
       return (
         <>
           <IfComponent statement={urlParams.has('userId')}>
-            <h1>控制端userId: {urlParams.get('userId')}</h1>
-            <button onClick={onClickPublicChannel}>回到公有頻道</button>
+            <h1>個人頻道: {urlParams.get('userId')}</h1>
+            <button onClick={onClickPublicChannel}>回到全班頻道</button>
           </IfComponent>
           <ElseComponent statement={urlParams.has('userId')}>
-            <h1>沒有userId: 公用頻道</h1>
-            UserId:{' '}
+            <h1>全班頻道</h1>
+            頻道切換:{' '}
             <input
               type="text"
               value={userId}
