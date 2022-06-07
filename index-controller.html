@@ -70,13 +70,43 @@
         overflow: hidden;
       }
 
-      .reveal .slides{
+      .reveal .slides {
         position: absolute;
         z-index: 9999999;
-        top:30% !important;
+        top: 30% !important;
         left: 30% !important;
         /* writing-mode: vertical-lr; */
+      }
 
+      #motions {
+        /* align-self: center; */
+        padding: 5px;
+        border-radius: 5px;
+        /* border: 1px solid #fff; */
+        position: absolute;
+        top: 10%;
+        left: 10px;
+        z-index: 10000000;
+      }
+
+      #motions li {
+        background: #000;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+      }
+
+      #motions li.selected {
+        background: #f00;
+      }
+
+      #pageIndex {
+        position: absolute;
+        right: 10%;
+        bottom: 10%;
+        background: #000;
+        color: #fff;
+        font-size: 18px;
       }
     </style>
 
@@ -124,15 +154,15 @@
 				<h1>la</h1>
 				<h1>vie</h1>
 			</section> -->
-      <section>
-        <h1>有<br>聽<br>懂</h1>
-      </section>
-      <section>
-        <h1 id="editable"></h1>
-      </section>
-      <section>
-        <h1>聽<br>不<br>懂</h1>
-      </section>
+        <section>
+          <h1>有<br />聽<br />懂</h1>
+        </section>
+        <section>
+          <h1 id="editable"></h1>
+        </section>
+        <section>
+          <h1>聽<br />不<br />懂</h1>
+        </section>
       </div>
     </div>
     <script src="dist/reveal.js"></script>
@@ -198,6 +228,7 @@
 
     <div style="display: none" id="audio"></div>
     <div id="app"></div>
+    <div id="motions"></div>
   </body>
   <script
     crossorigin
@@ -211,6 +242,17 @@
     crossorigin
     src="https://unpkg.com/@babel/standalone/babel.min.js"
   ></script>
+  <script>
+    window.addEventListener('load', function () {
+      changeScene(0);
+      runModel(-0.5, -0.35, 1.2);
+    });
+
+    // setTimeout(() => {
+    //   changeScene(0);
+    //   runModel(0, 0, 2);
+    // }, 2000);
+  </script>
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js';
@@ -246,6 +288,8 @@
 
     let urlParams = new URLSearchParams(window.location.search);
 
+    const motions = document.querySelector('#motions');
+
     const updateData = () => {
       let updates = {};
 
@@ -257,6 +301,15 @@
       updates[`my`] = Math.round(mouseY * 100) / 100;
       updates[`mouth`] = Math.round(lastVolume * 100) / 100;
       updates[`sx`] = currentIndice;
+
+      let motionId = 0;
+      for (let i = 1; i < motions.children.length; i++) {
+        if (motions.children[i].className === 'selected') {
+          motionId = i;
+        }
+      }
+
+      updates[`selectedMotion`] = motionId;
       if (urlParams.has('userId')) {
         update(ref(database, `userId/${urlParams.get('userId')}`), updates);
       } else {

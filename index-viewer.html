@@ -66,10 +66,10 @@
         z-index: 9999999;
       }
 
-      .reveal .slides{
+      .reveal .slides {
         position: absolute;
         z-index: 9999999;
-        top:35% !important;
+        top: 35% !important;
         left: 30% !important;
         /* writing-mode: vertical-lr; */
       }
@@ -154,6 +154,37 @@
         left: 50%;
         margin-left: -14px;
       }
+
+      #motions {
+        /* align-self: center; */
+        padding: 5px;
+        border-radius: 5px;
+        /* border: 1px solid #fff; */
+        position: absolute;
+        top: 10%;
+        left: 10px;
+        z-index: 10000000;
+      }
+
+      #motions li {
+        background: #000;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+      }
+
+      #motions li.selected {
+        background: #f00;
+      }
+
+      #pageIndex {
+        position: absolute;
+        right: 10%;
+        bottom: 10%;
+        background: #000;
+        color: #fff;
+        font-size: 18px;
+      }
     </style>
 
     <!-- Pollyfill script -->
@@ -200,15 +231,14 @@
 				<h1>vie</h1>
 			</section> -->
         <section>
-          <h1>有<br>聽<br>懂</h1>
+          <h1>有<br />聽<br />懂</h1>
         </section>
         <section>
           <h1 id="editable"></h1>
         </section>
         <section>
-          <h1>聽<br>不<br>懂</h1>
+          <h1>聽<br />不<br />懂</h1>
         </section>
-        
       </div>
     </div>
     <script src="dist/reveal.js"></script>
@@ -270,6 +300,7 @@
 
     <div style="display: none" id="audio"></div>
     <div id="app"></div>
+    <div id="motions"></div>
   </body>
   <script
     crossorigin
@@ -283,6 +314,16 @@
     crossorigin
     src="https://unpkg.com/@babel/standalone/babel.min.js"
   ></script>
+  <script>
+    window.addEventListener('load', function () {
+      changeScene(0);
+      runModel(-0.5, -0.35, 1.2);
+    });
+    // setTimeout(() => {
+    //   changeScene(0);
+    //   runModel(0, 0, 2);
+    // }, 2000);
+  </script>
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js';
@@ -323,6 +364,8 @@
 
     let urlParams = new URLSearchParams(window.location.search);
 
+    const motions = document.querySelector('#motions');
+
     const msgRef = ref(
       db,
       urlParams.has('userId')
@@ -349,6 +392,12 @@
         sx = snap.val();
         Reveal.slide(sx.h, sx.v, sx.f);
       });
+
+      onValue(ref(db, `userId/${userId}/selectedMotion`), snap => {
+        motionId = snap.val();
+        //click 指定的motions
+        motions.children[motionId].click();
+      });
     } else {
       console.log('public channel');
       //snapshot來監聽mx資料
@@ -367,6 +416,12 @@
       onValue(ref(db, 'sx'), snap => {
         sx = snap.val();
         Reveal.slide(sx.h, sx.v, sx.f);
+      });
+
+      onValue(ref(db, 'selectedMotion'), snap => {
+        motionId = snap.val();
+        //click 指定的motions
+        motions.children[motionId].click();
       });
     }
 
@@ -426,7 +481,9 @@
     var mx = 0,
       my = 0,
       mouth = 0,
-      sx = 0;
+      sx = 0,
+      motionId = 0;
+
     // setInterval(() => {
     // 	var volume = getMicorphoneVolume() / 150;
     // 	var lowThreshold = 0.3;
