@@ -83,7 +83,7 @@
       #bullets {
         position: absolute;
         width: 100vw;
-        height: 20vh;
+        height: 5vh;
         z-index: 9999999;
       }
 
@@ -528,7 +528,15 @@
       if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
         let doc = data[google.picker.Response.DOCUMENTS][0];
         url = doc[google.picker.Document.EMBEDDABLE_URL];
-        document.querySelector('#slideBackground').src = url;
+
+        //console.log(url.split('/'));
+
+        let presentationId = url.split('/')[5];
+
+        let presentationUrl = `https://docs.google.com/presentation/d/${presentationId}/edit#slide=id.p1`;
+        //let presentationUrl = `https://docs.google.com/presentation/d/${presentationId}/present#slide=id.p1`;
+
+        document.querySelector('#slideBackground').src = presentationUrl;
       }
       //let message = `You picked: ${url}`;
       //console.log(message);
