@@ -1,41 +1,19 @@
-# NTUT DM2022s 作業講解簡報
+# NTUT CSIE Computer Graphics Laboratory's Cubism Controller and Viewer
 
-## 老師的課程首頁
+## How to use
 
-https://myweb.ntut.edu.tw/~tjhsieh/c/dm/dm2022s/
+1. Controlling the cubism character
 
-## 作業一影片講解
+   https://changken.github.io/cubism-controller/index-controller.html
 
-https://www.youtube.com/watch?v=uy3TsqMUXZ8
+2. Be a viewer of the cubism character
 
-## 作業二影片講解
+   https://changken.github.io/cubism-controller/index-viewer.html
 
-https://www.youtube.com/watch?v=CxzTe0hwtWQ
+## Our Website
 
-## 作業三影片講解
+https://myweb.ntut.edu.tw/~tjhsieh/
 
-https://youtu.be/WioRizS5ixY
+## Inspired from
 
-## 作業四影片講解
-
-https://www.youtube.com/watch?v=O1bHYk6ja5E
-
-## 作業五影片講解
-
-https://youtu.be/iZhHXWIzOcU
-
-## 作業九影片講解
-
-https://youtu.be/n1_JBO7IMHQ
-
-## 作業十影片講解
-
-https://youtu.be/yrqqXMtleuw
-
-## 作業十一影片講解
-
-https://youtu.be/1MRd736xYIU
-
-## TODO list
-
-no, I have already done all of my work!
+1. https://github.com/HowLemon/reveal
